@@ -6,13 +6,13 @@ Solution of Rush hour
   x is the row number of the square, and y is the column number of the square.
   A square object has properties of occupied and car. If there is a car on the square, square.occupied = True and square.car = car.name. Otherwise sqaure.occupied = False and square.car = None.
   The car objects A, B, C, E, F, G, H, I, J, R are intialized. A car object has two possible orientations, 'h' meaning horizontal and 'v'meaning vertical. A car can occupy 2 or 3 squares and only move in its orientation.
-  A car object also has freedom properties, namely freedom_left, freedom_right, freedom_up and freedom_down. The freedom indicates the number of unoccupied squares before and after the car.  
+  A car object also has freedom properties, namely freedom_left, freedom_right, freedom_up and freedom_down. The freedom indicates the number of unoccupied squares before and after the car.  \n
 2. Move the cars
-  For each car, the range of possible squares to move to are searched by calling car.get_freedom().  Then a square is randomly selected from  the range. If the car could move to the square without overlapping with other cars or protruding the border of the board, the positions of the car is updated to the new position. If there are no unoccupied squares before or after the car, the position of the car remains the same.
+  For each car, the range of possible squares to move to are searched by calling car.get_freedom().  Then a square is randomly selected from  the range. If the car could move to the square without overlapping with other cars or protruding the border of the board, the positions of the car is updated to the new position. If there are no unoccupied squares before or after the car, the position of the car remains the same.\n
 3. Create the graph
-  The problem is converted to a graph. All possible configurations of the cars are explored until a winning configuration is found where there are no other cars in the row of R. Each configuration is a vertex. The distance between every two vertices are calculated. A vertex is connected to its nearest neighbors. Breadth-first search is performed to find the shortest path from the initial configuration to the winning configuration. When the shortes path is found, all of the moves in the path are recorded.
+  The problem is converted to a graph. All possible configurations of the cars are explored until a winning configuration is found where there are no other cars in the row of R. Each configuration is a vertex. The distance between every two vertices are calculated. A vertex is connected to its nearest neighbors. Breadth-first search is performed to find the shortest path from the initial configuration to the winning configuration. When the shortes path is found, all of the moves in the path are recorded.\n
 4. Show the solution in animation
-  The moves in the shortest path are shown in animation using pygame. 
+  The moves in the shortest path are shown in animation using pygame. \n
 
 Appendices:
 1. Install Pygame
