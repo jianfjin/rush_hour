@@ -172,11 +172,13 @@ class Vertex:
         self.cars = []
         
     def addCar(self, cars):
+        # hold current configuration of all cars
         for car in cars:
             tempCar = Car(car.name, car.x, car.y, car.width, car.height, car.orient)
             self.cars.append(tempCar)
 
     def addNeighbor(self,nbr,dist):
+        # connect to a neighbor vertex
         self.connectedTo[nbr] = dist
 
     def __str__(self):
@@ -189,6 +191,7 @@ class Vertex:
         return self.id
 
     def getDist(self,nbr):
+        # calculate the distance between two vertices
         dist = 0
         for i in xrange(len(self.cars)):
             if self.cars[i].orient == 'h':
@@ -235,7 +238,7 @@ class Graph:
         return iter(self.vertList.values())
     
 def move_cars(squares, car_in_row, car_in_col, moves):
-    #moves = []
+    """move all cars to random possible new positions"""
     for row in car_in_row:      
         #print car_in_row[row]
         for car in car_in_row[row]:
@@ -403,6 +406,7 @@ def bfs(s, g):
     return parent
 
 def shortest_path(parent, source, target):    
+    """get the shortest path of breadth-first search"""
     path = []
     while target != source:
         prev = parent[target]
