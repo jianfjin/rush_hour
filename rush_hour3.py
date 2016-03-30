@@ -1,9 +1,11 @@
 
 # coding: utf-8
 
-# In[5]:
+# In[3]:
 
 import random
+import pygame, sys, time
+from pygame.locals import *
 
 class Square(object):
     def __init__(self, index):
@@ -372,69 +374,14 @@ def showCars(squares):
         elif i % 6 == 5:
             print str(squares[i].car) + ' \n'
 
-def dijkstra(g, s, t):
-    """find the shortest path from source to target"""
-    # create vertex set Q
-    dist = {}
-    prev = {}
-    # vertex list
-    Q = [] 
-    # shortest path from source to target
-    S = [] 
-    # Initialization
-    for v in g.vertList: 
-        # distance from source to v
-        dist[v] = float('inf')
-        # Previous node in optimal path from source
-        prev[v] = None 
-        # Q (unvisited nodes)
-        Q.append(v) 
-    #print Q    
-    # Distance from source to source
-    dist[s] = 0 
-    #print dist
-    while Q != []:
-        minDist = float('inf')
-        for v in Q:
-            # Source node will be selected first
-            #print min(dist.values())          
-            if dist[v] < minDist:
-                #print v, dist[v]
-                minDist = dist[v]
-                u = v 
-        #print 'u: ' + str(u) 
-        #print 's to u: ' + str(dist[u])
-        # delete u from Q
-        Q.remove(u) 
-        #print Q
-        for v in g.vertList[u].connectedTo:
-#             print 'u: ' + str(u)  
-#             print 'neighbor:' + str(v.id)
-#             print 'u-v dist:' + str(g.vertList[u].getDist(v))
-            alt = dist[u] + g.vertList[u].getDist(v)
-#             print 'alt dist:' + str(alt)
-#             print 's to v:' + str(dist[v.id])
-#             print 's to u:' + str(dist[u])
-#             print '\n'
-            # A shorter path from source to v has been found
-            if alt <= dist[v.id]: 
-                dist[v.id] = alt
-                prev[v.id] = u
-        # get the shortest path from source to target
-        #print 'u: ' + str(u) + '\n'
-        if u == t:
-            #print u, t
-            S.append(u)
-            while prev[u]:
-                # Push the vertex onto the stack
-                u = prev[u]
-                # Traverse from target to source
-                S.append(u)    
-            S.append(s)  
-            return S
-        
-    return dist, prev    
-    
+def get_cars(cars):
+    pos = {}
+    for car in cars:
+        x = car.x
+        y = car.y
+        name = car.name
+        pos[name] = (x, y)
+    return pos    
 
 def bfs(s, g):
     """breadth first search"""
@@ -615,12 +562,15 @@ path = shortest_path(parent, 0, len(v)-1)
 print path
 print len(path)
 
+# show the shortest path
 sqrs = {}
 crs = {}
+carPos = {}
 for k in path[::-1]:
     print k
     crs[k] = v[k].cars
     sqrs[k] = {}
+    carPos[k] = get_cars(crs[k])
     for i in xrange(36):
         sqrs[k][i] = Square(i)
     for car in crs[k]:
@@ -630,6 +580,96 @@ for k in path[::-1]:
     status = checkWin(sqrs[k], newR)
     if status:
         break
+
+#print carPos
+
+
+# In[1]:
+
+def show_animation(moves):
+    """show the animation of the movement of the cars"""
+    # set up pygame
+    pygame.init()
+
+    # set up the window
+    WINDOWWIDTH = 300
+    WINDOWHEIGHT = 300
+    windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT), 0, 32)
+    pygame.display.set_caption('Rush Hour')
+
+    # set up the colors
+    BLACK = (0, 0, 0)
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
+    YELLOW = (255, 255, 0)
+    PURPLE = (128, 0, 128)
+    TEAL = (0, 128, 128)
+    LIME = (0, 128, 0)
+    GRAY = (128, 128, 128)
+    WHITE = (255, 255, 255)
+    PINK = (255, 200, 200)
+    DBLUE = (0, 0, 128)
+    # setup squares
+    squareWidth = 50
+    squareHeight = 50
+    squares = {}
+    for i in xrange(36):
+        squares[i] = {'rect':pygame.Rect((i%6)*squareWidth, (i/6)*squareHeight, squareWidth, squareHeight), 'color':BLACK}
+
+    # setup cars
+    cars = {}
+    cars['A'] = {'rect':pygame.Rect(4*squareWidth, 0*squareHeight, squareWidth * 2, squareHeight), 'color':GREEN}
+    cars['B'] = {'rect':pygame.Rect(2*squareWidth, 1*squareHeight, squareWidth * 2, squareHeight), 'color':BLUE}
+    cars['C'] = {'rect':pygame.Rect(4*squareWidth, 1*squareHeight, squareWidth * 2, squareHeight), 'color':PURPLE}
+    cars['E'] = {'rect':pygame.Rect(4*squareWidth, 2*squareHeight, squareWidth, squareHeight * 3), 'color':PINK}
+    cars['F'] = {'rect':pygame.Rect(5*squareWidth, 2*squareHeight, squareWidth, squareHeight * 3), 'color':LIME}
+    cars['G'] = {'rect':pygame.Rect(0*squareWidth, 3*squareHeight, squareWidth * 2, squareHeight), 'color':GRAY}
+    cars['H'] = {'rect':pygame.Rect(2*squareWidth, 3*squareHeight, squareWidth * 2, squareHeight), 'color':TEAL}
+    cars['I'] = {'rect':pygame.Rect(3*squareWidth, 4*squareHeight, squareWidth, squareHeight * 2), 'color':YELLOW}
+    cars['J'] = {'rect':pygame.Rect(4*squareWidth, 5*squareHeight, squareWidth * 2, squareHeight), 'color':DBLUE}
+    cars['R'] = {'rect':pygame.Rect(1*squareWidth, 2*squareHeight, squareWidth * 2, squareHeight), 'color':RED}
+
+    # print cars['R']['rect'].w
+    # print cars['R']['rect'].h
+    # print cars['A']['rect'].x
+    # print cars['A']['rect'].y
+
+    # run the game loop
+    for m in sorted(moves):
+        # check for the QUIT event
+        #print m
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+        # draw the white background onto the surface
+        windowSurface.fill(WHITE)        
+        # draw the squares
+        for i in squares:    
+            pygame.draw.rect(windowSurface, squares[i]['color'], squares[i]['rect'], 1)
+        # update the cars
+        carsToMove = moves[m]
+        for car in carsToMove:
+            name = car
+            x = carsToMove[car][0]
+            y = carsToMove[car][1]
+            cars[name]['rect'].x = x * squareWidth
+            cars[name]['rect'].y = y * squareHeight
+            # draw cars
+            pygame.draw.rect(windowSurface, cars[name]['color'], cars[name]['rect'])
+        # draw the window onto the screen
+        pygame.display.update()
+        time.sleep(1.0)
+        # check for quit
+        if m == len(moves) - 1:
+            event.type = QUIT
+    
+
+
+# In[4]:
+
+show_animation(carPos)
 
 
 # In[ ]:
